@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 function Banners() {
   const [banners, setBanners] = useState(() => {
     const savedBanners =
