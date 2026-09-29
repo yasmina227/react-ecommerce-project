@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 
 function PromoCodes() {
-  const [promoCodes, setPromoCodes] = useState(() => {
-    const savedPromoCodes =
-      localStorage.getItem("adminPromoCodes");
+const [promoCodes, setPromoCodes] = useState(() => {
+  const savedPromoCodes = localStorage.getItem("adminPromoCodes");
+  return savedPromoCodes ? JSON.parse(savedPromoCodes) : [];
 
     return savedPromoCodes
       ? JSON.parse(savedPromoCodes)

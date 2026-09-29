@@ -1,20 +1,9 @@
 import { useEffect, useState } from "react";
+
 function Banners() {
   const [banners, setBanners] = useState(() => {
-    const savedBanners =
-      localStorage.getItem("adminBanners");
-
-    return savedBanners
-      ? JSON.parse(savedBanners)
-      : [
-          {
-            id: 1,
-            name: "Homepage Banner 1",
-            title: "Summer Sale",
-            status: "Active",
-            deleted: false,
-          },
-        ];
+    const savedBanners = localStorage.getItem("adminBanners");
+    return savedBanners ? JSON.parse(savedBanners) : [];
   });
 
   const [showForm, setShowForm] = useState(false);
@@ -26,10 +15,7 @@ function Banners() {
   });
 
   useEffect(() => {
-    localStorage.setItem(
-      "adminBanners",
-      JSON.stringify(banners)
-    );
+    localStorage.setItem("adminBanners", JSON.stringify(banners));
   }, [banners]);
 
   const handleChange = (e) => {
@@ -108,10 +94,7 @@ function Banners() {
         banner.id === id
           ? {
               ...banner,
-              status:
-                banner.status === "Active"
-                  ? "Inactive"
-                  : "Active",
+              status: banner.status === "Active" ? "Inactive" : "Active",
             }
           : banner
       )
@@ -145,10 +128,7 @@ function Banners() {
           <p>Manage homepage banners.</p>
         </div>
 
-        <button
-          className="btn btn-primary"
-          onClick={handleAdd}
-        >
+        <button className="btn btn-primary" onClick={handleAdd}>
           <i className="bi bi-plus-lg me-2"></i>
           Add Banner
         </button>
@@ -156,18 +136,12 @@ function Banners() {
 
       {showForm && (
         <div className="dashboard-box mt-4">
-          <h4>
-            {editingBanner
-              ? "Edit Banner"
-              : "Add Banner"}
-          </h4>
+          <h4>{editingBanner ? "Edit Banner" : "Add Banner"}</h4>
 
           <form onSubmit={handleSubmit}>
             <div className="row g-3 mt-1">
               <div className="col-md-6">
-                <label className="form-label">
-                  Banner Name
-                </label>
+                <label className="form-label">Banner Name</label>
 
                 <input
                   type="text"
@@ -180,9 +154,7 @@ function Banners() {
               </div>
 
               <div className="col-md-6">
-                <label className="form-label">
-                  Banner Title
-                </label>
+                <label className="form-label">Banner Title</label>
 
                 <input
                   type="text"
@@ -195,13 +167,8 @@ function Banners() {
               </div>
 
               <div className="col-12">
-                <button
-                  type="submit"
-                  className="btn btn-primary me-2"
-                >
-                  {editingBanner
-                    ? "Update Banner"
-                    : "Add Banner"}
+                <button type="submit" className="btn btn-primary me-2">
+                  {editingBanner ? "Update Banner" : "Add Banner"}
                 </button>
 
                 <button
@@ -231,10 +198,7 @@ function Banners() {
           <tbody>
             {banners.length === 0 ? (
               <tr>
-                <td
-                  colSpan="4"
-                  className="text-center py-4"
-                >
+                <td colSpan="4" className="text-center py-4">
                   No banners found
                 </td>
               </tr>
@@ -255,9 +219,7 @@ function Banners() {
                           : "bg-warning text-dark"
                       }`}
                     >
-                      {banner.deleted
-                        ? "Deleted"
-                        : banner.status}
+                      {banner.deleted ? "Deleted" : banner.status}
                     </span>
                   </td>
 
@@ -266,29 +228,21 @@ function Banners() {
                       <>
                         <button
                           className="btn btn-primary btn-sm me-2"
-                          onClick={() =>
-                            handleEdit(banner)
-                          }
+                          onClick={() => handleEdit(banner)}
                         >
                           Edit
                         </button>
 
                         <button
                           className="btn btn-warning btn-sm me-2"
-                          onClick={() =>
-                            toggleStatus(banner.id)
-                          }
+                          onClick={() => toggleStatus(banner.id)}
                         >
-                          {banner.status === "Active"
-                            ? "Disable"
-                            : "Activate"}
+                          {banner.status === "Active" ? "Disable" : "Activate"}
                         </button>
 
                         <button
                           className="btn btn-danger btn-sm"
-                          onClick={() =>
-                            handleDelete(banner.id)
-                          }
+                          onClick={() => handleDelete(banner.id)}
                         >
                           Delete
                         </button>

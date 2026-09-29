@@ -1,68 +1,87 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getAllOrders, getAllUsers } from "../../services/adminService";
 
 function Shipping() {
-  const [orders, setOrders] = useState([
-    {
-      id: 1001,
-      customer: "Ahmed Mohamed",
-      total: 150,
-      status: "Delivered",
-    },
-    {
-      id: 1002,
-      customer: "Sara Ali",
-      total: 90,
-      status: "Pending",
-    },
-  ]);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+
+      const [ordersData, usersData] = await Promise.all([
+        getAllOrders(),
+        getAllUsers(),
+      ]);
+
+      const usersMap = {};
+      usersData.forEach((user) => {
+        usersMap[user.id] = `${user.firstName} ${user.lastName}`;
+      });
+
+      const formatted = ordersData.map((order) => ({
+        id: order.id,
+        customer: usersMap[order.userId] || `User #${order.userId}`,
+        shippingStatus: "Pending",
+      }));
+
+      setOrders(formatted);
+    } catch (err) {
+      console.log(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const updateShippingStatus = (id, status) => {
     setOrders(
       orders.map((order) =>
-        order.id === id
-          ? {
-              ...order,
-              shippingStatus: status,
-            }
-          : order
+        order.id === id ? { ...order, shippingStatus: status } : order
       )
     );
-  };
-
-  const getShippingStatus = (order) => {
-    if (order.shippingStatus) {
-      return order.shippingStatus;
-    }
-
-    if (order.status === "Delivered") {
-      return "Delivered";
-    }
-
-    if (order.status === "Shipped") {
-      return "Shipping";
-    }
-
-    return "Pending";
   };
 
   const getStatusClass = (status) => {
     switch (status) {
       case "Pending":
         return "status-pending";
-
       case "Processing":
         return "status-processing";
-
       case "Shipping":
         return "status-shipped";
-
       case "Delivered":
         return "status-delivered";
-
       default:
         return "status-pending";
     }
   };
+
+  if (loading) {
+    return (
+      <div className="text-center my-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="alert alert-danger m-4">
+        Error: {error}
+        <button className="btn btn-sm btn-dark ms-3" onClick={fetchOrders}>
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -87,67 +106,44 @@ function Shipping() {
           <tbody>
             {orders.length === 0 ? (
               <tr>
-                <td
-                  colSpan="4"
-                  className="text-center py-4"
-                >
+                <td colSpan="4" className="text-center py-4">
                   No orders found
                 </td>
               </tr>
             ) : (
-              orders.map((order) => {
-                const shippingStatus =
-                  getShippingStatus(order);
+              orders.map((order) => (
+                <tr key={order.id}>
+                  <td>#{order.id}</td>
+                  <td>{order.customer}</td>
 
-                return (
-                  <tr key={order.id}>
-                    <td>#{order.id}</td>
+                  <td>
+                    <span
+                      className={`badge ${getStatusClass(
+                        order.shippingStatus
+                      )}`}
+                    >
+                      {order.shippingStatus}
+                    </span>
+                  </td>
 
-                    <td>{order.customer}</td>
-
-                    <td>
-                      <span
-                        className={`badge ${getStatusClass(
-                          shippingStatus
-                        )}`}
-                      >
-                        {shippingStatus}
-                      </span>
-                    </td>
-
-                    <td>
-                      <select
-                        className={`form-select ${getStatusClass(
-                          shippingStatus
-                        )}`}
-                        value={shippingStatus}
-                        onChange={(e) =>
-                          updateShippingStatus(
-                            order.id,
-                            e.target.value
-                          )
-                        }
-                      >
-                        <option value="Pending">
-                          Pending
-                        </option>
-
-                        <option value="Processing">
-                          Processing
-                        </option>
-
-                        <option value="Shipping">
-                          Shipping
-                        </option>
-
-                        <option value="Delivered">
-                          Delivered
-                        </option>
-                      </select>
-                    </td>
-                  </tr>
-                );
-              })
+                  <td>
+                    <select
+                      className={`form-select ${getStatusClass(
+                        order.shippingStatus
+                      )}`}
+                      value={order.shippingStatus}
+                      onChange={(e) =>
+                        updateShippingStatus(order.id, e.target.value)
+                      }
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Processing">Processing</option>
+                      <option value="Shipping">Shipping</option>
+                      <option value="Delivered">Delivered</option>
+                    </select>
+                  </td>
+                </tr>
+              ))
             )}
           </tbody>
         </table>

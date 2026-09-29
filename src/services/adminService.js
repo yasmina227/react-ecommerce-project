@@ -2,26 +2,9 @@ import axios from 'axios';
 
 const BASE_URL = 'https://dummyjson.com';
 
-// ==================== USERS ====================
-export const getAllUsers = async () => {
-  const res = await axios.get(`${BASE_URL}/users`);
-  return res.data.users;
-};
-
-export const deleteUser = async (id) => {
-  const res = await axios.delete(`${BASE_URL}/users/${id}`);
-  return res.data;
-};
-
-// ==================== CATEGORIES ====================
-export const getAllCategories = async () => {
-  const res = await axios.get(`${BASE_URL}/products/categories`);
-  return res.data;
-};
-
 // ==================== PRODUCTS ====================
 export const getAllProducts = async () => {
-  const res = await axios.get(`${BASE_URL}/products?limit=100`);
+  const res = await axios.get(`${BASE_URL}/products`);
   return res.data.products;
 };
 
@@ -40,9 +23,26 @@ export const deleteProduct = async (id) => {
   return res.data;
 };
 
+// ==================== CATEGORIES ====================
+export const getAllCategories = async () => {
+  const res = await axios.get(`${BASE_URL}/products/category-list`);
+  return res.data;
+};
+
+// ==================== USERS ====================
+export const getAllUsers = async () => {
+  const res = await axios.get(`${BASE_URL}/users?limit=0`);
+  return res.data.users;
+};
+
+export const deleteUser = async (id) => {
+  const res = await axios.delete(`${BASE_URL}/users/${id}`);
+  return res.data;
+};
+
 // ==================== ORDERS ====================
 export const getAllOrders = async () => {
-  const res = await axios.get(`${BASE_URL}/carts`);
+  const res = await axios.get(`${BASE_URL}/carts?limit=0`);
   return res.data.carts;
 };
 
@@ -51,7 +51,7 @@ export const deleteOrder = async (id) => {
   return res.data;
 };
 
-// ==================== DASHBOARD STATS ====================
+// ==================== DASHBOARD ====================
 export const getDashboardStats = async () => {
   const [p, u, o] = await Promise.all([
     axios.get(`${BASE_URL}/products?limit=1`),

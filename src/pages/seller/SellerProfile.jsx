@@ -3,18 +3,12 @@ import { useEffect, useState } from "react";
 function SellerProfile() {
   const [profile, setProfile] = useState(() => {
     const savedProfile = localStorage.getItem("sellerProfile");
-
     return savedProfile
       ? JSON.parse(savedProfile)
-      : {
-          storeName: "My Store",
-          email: "seller@gmail.com",
-          phone: "01000000000",
-        };
+      : { storeName: "", email: "", phone: "" };
   });
 
   const [formData, setFormData] = useState(profile);
-
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
@@ -36,11 +30,7 @@ function SellerProfile() {
   const handleSave = (e) => {
     e.preventDefault();
 
-    if (
-      !formData.storeName ||
-      !formData.email ||
-      !formData.phone
-    ) {
+    if (!formData.storeName || !formData.email || !formData.phone) {
       alert("Please fill all fields");
       return;
     }
@@ -65,12 +55,8 @@ function SellerProfile() {
 
       <div className="dashboard-box mt-4">
         <form onSubmit={handleSave}>
-          {/* Store Name */}
           <div className="mb-3">
-            <label className="form-label">
-              Store Name
-            </label>
-
+            <label className="form-label">Store Name</label>
             <input
               type="text"
               name="storeName"
@@ -81,12 +67,8 @@ function SellerProfile() {
             />
           </div>
 
-          {/* Email */}
           <div className="mb-3">
-            <label className="form-label">
-              Email
-            </label>
-
+            <label className="form-label">Email</label>
             <input
               type="email"
               name="email"
@@ -97,12 +79,8 @@ function SellerProfile() {
             />
           </div>
 
-          {/* Phone */}
           <div className="mb-3">
-            <label className="form-label">
-              Phone
-            </label>
-
+            <label className="form-label">Phone</label>
             <input
               type="text"
               name="phone"
@@ -113,7 +91,6 @@ function SellerProfile() {
             />
           </div>
 
-          {/* Buttons */}
           {!isEditing ? (
             <button
               type="button"
@@ -125,14 +102,10 @@ function SellerProfile() {
             </button>
           ) : (
             <div>
-              <button
-                type="submit"
-                className="btn btn-success me-2"
-              >
+              <button type="submit" className="btn btn-success me-2">
                 <i className="bi bi-check-lg me-2"></i>
                 Save Changes
               </button>
-
               <button
                 type="button"
                 className="btn btn-secondary"

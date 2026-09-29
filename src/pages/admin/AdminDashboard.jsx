@@ -1,65 +1,98 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-
-const API = "https://dummyjson.com/products";
+import {
+  getDashboardStats,
+  getAllOrders,
+  getAllUsers,
+} from "../../services/adminService";
 
 function AdminDashboard() {
-  const [products, setProducts] = useState([]);
+  const [stats, setStats] = useState({
+    totalProducts: 0,
+    totalUsers: 0,
+    totalOrders: 0,
+  });
 
-  const [orders, setOrders] = useState([
-    {
-      id: 1001,
-      customer: "Ahmed Mohamed",
-      total: 150,
-      status: "Delivered",
-    },
-    {
-      id: 1002,
-      customer: "Sara Ali",
-      total: 90,
-      status: "Pending",
-    },
-  ]);
+  const [recentOrders, setRecentOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    getProducts();
+    fetchDashboardData();
   }, []);
 
-  const getProducts = async () => {
+  const fetchDashboardData = async () => {
     try {
-      const response = await axios.get(API);
-      setProducts(response.data.products);
-    } catch (error) {
-      console.log(error);
+      setLoading(true);
+
+      const [statsData, ordersData, usersData] = await Promise.all([
+        getDashboardStats(),
+        getAllOrders(),
+        getAllUsers(),
+      ]);
+
+      setStats(statsData);
+
+      const usersMap = {};
+      usersData.forEach((user) => {
+        usersMap[user.id] = `${user.firstName} ${user.lastName}`;
+      });
+
+      const formattedOrders = ordersData.slice(0, 5).map((order) => ({
+        id: order.id,
+        customer: usersMap[order.userId] || `User #${order.userId}`,
+        total: order.total,
+        status: "Pending",
+      }));
+
+      setRecentOrders(formattedOrders);
+    } catch (err) {
+      console.log(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
-
-  const totalProducts = products.length;
-  const totalOrders = orders.length;
-  const totalSellers = 1;
-  const totalUsers = 3;
 
   const getStatusClass = (status) => {
     switch (status) {
       case "Pending":
         return "dashboard-status pending";
-
       case "Processing":
         return "dashboard-status processing";
-
       case "Shipped":
         return "dashboard-status shipped";
-
       case "Delivered":
         return "dashboard-status delivered";
-
       case "Cancelled":
         return "dashboard-status cancelled";
-
       default:
         return "dashboard-status";
     }
   };
+
+  if (loading) {
+    return (
+      <div className="text-center my-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="alert alert-danger m-4">
+        Error: {error}
+        <button
+          className="btn btn-sm btn-dark ms-3"
+          onClick={fetchDashboardData}
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="admin-dashboard">
@@ -91,10 +124,8 @@ function AdminDashboard() {
             </div>
 
             <p>Total Users</p>
-            <h2>{totalUsers}</h2>
-            <span className="stat-description">
-              Registered users
-            </span>
+            <h2>{stats.totalUsers}</h2>
+            <span className="stat-description">Registered users</span>
           </div>
         </div>
 
@@ -112,10 +143,8 @@ function AdminDashboard() {
             </div>
 
             <p>Total Products</p>
-            <h2>{totalProducts}</h2>
-            <span className="stat-description">
-              Products in store
-            </span>
+            <h2>{stats.totalProducts}</h2>
+            <span className="stat-description">Products in store</span>
           </div>
         </div>
 
@@ -133,10 +162,8 @@ function AdminDashboard() {
             </div>
 
             <p>Total Orders</p>
-            <h2>{totalOrders}</h2>
-            <span className="stat-description">
-              Customer orders
-            </span>
+            <h2>{stats.totalOrders}</h2>
+            <span className="stat-description">Customer orders</span>
           </div>
         </div>
 
@@ -154,10 +181,8 @@ function AdminDashboard() {
             </div>
 
             <p>Total Sellers</p>
-            <h2>{totalSellers}</h2>
-            <span className="stat-description">
-              Store sellers
-            </span>
+            <h2>{stats.totalUsers}</h2>
+            <span className="stat-description">Store sellers</span>
           </div>
         </div>
       </div>
@@ -170,7 +195,7 @@ function AdminDashboard() {
           </div>
 
           <span className="orders-count">
-            {totalOrders} Orders
+            {stats.totalOrders} Orders
           </span>
         </div>
 
@@ -186,19 +211,17 @@ function AdminDashboard() {
             </thead>
 
             <tbody>
-              {orders.length === 0 ? (
+              {recentOrders.length === 0 ? (
                 <tr>
                   <td colSpan="4" className="text-center py-5">
                     No orders found
                   </td>
                 </tr>
               ) : (
-                orders.slice(0, 5).map((order) => (
+                recentOrders.map((order) => (
                   <tr key={order.id}>
                     <td>
-                      <strong className="order-id">
-                        #{order.id}
-                      </strong>
+                      <strong className="order-id">#{order.id}</strong>
                     </td>
 
                     <td>
@@ -206,7 +229,6 @@ function AdminDashboard() {
                         <div className="customer-avatar">
                           {order.customer.charAt(0)}
                         </div>
-
                         <span>{order.customer}</span>
                       </div>
                     </td>
@@ -216,11 +238,7 @@ function AdminDashboard() {
                     </td>
 
                     <td>
-                      <span
-                        className={getStatusClass(
-                          order.status
-                        )}
-                      >
+                      <span className={getStatusClass(order.status)}>
                         {order.status}
                       </span>
                     </td>
