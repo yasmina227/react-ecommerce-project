@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-export default class  extends Component {
+export default class ErrorMessage extends Component {
   render() {
     return (
       <>
