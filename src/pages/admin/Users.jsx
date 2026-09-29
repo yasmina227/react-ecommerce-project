@@ -1,39 +1,41 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getAllUsers, deleteUser as deleteUserAPI } from "../../services/adminService";
 
 function Users() {
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      name: "Ahmed Mohamed",
-      email: "ahmed@gmail.com",
-      role: "Customer",
-      status: "Pending",
-      deleted: false,
-    },
-    {
-      id: 2,
-      name: "Sara Ali",
-      email: "sara@gmail.com",
-      role: "Seller",
-      status: "Active",
-      deleted: false,
-    },
-    {
-      id: 3,
-      name: "Omar Hassan",
-      email: "omar@gmail.com",
-      role: "Customer",
-      status: "Active",
-      deleted: false,
-    },
-  ]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const data = await getAllUsers();
+
+      const formatted = data.map((u) => ({
+        id: u.id,
+        name: `${u.firstName} ${u.lastName}`,
+        email: u.email,
+        role: u.role === "admin" ? "Seller" : "Customer",
+        status: "Active",
+        deleted: false,
+      }));
+
+      setUsers(formatted);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const approveUser = (id) => {
     setUsers(
       users.map((user) =>
-        user.id === id
-          ? { ...user, status: "Active" }
-          : user
+        user.id === id ? { ...user, status: "Active" } : user
       )
     );
   };
@@ -41,48 +43,63 @@ function Users() {
   const restrictUser = (id) => {
     setUsers(
       users.map((user) =>
-        user.id === id
-          ? { ...user, status: "Restricted" }
-          : user
+        user.id === id ? { ...user, status: "Restricted" } : user
       )
     );
   };
 
-  const deleteUser = (id) => {
+  const deleteUser = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this user?"
     );
-
     if (!confirmDelete) return;
 
-    setUsers(
-      users.map((user) =>
-        user.id === id
-          ? { ...user, deleted: true }
-          : user
-      )
-    );
+    try {
+      await deleteUserAPI(id);
+      setUsers(
+        users.map((user) =>
+          user.id === id ? { ...user, deleted: true } : user
+        )
+      );
+    } catch (err) {
+      alert("Error while deleting user");
+    }
   };
 
   const getStatusClass = (user) => {
-    if (user.deleted) {
-      return "bg-secondary";
-    }
-
+    if (user.deleted) return "bg-secondary";
     switch (user.status) {
       case "Active":
         return "bg-success";
-
       case "Restricted":
         return "bg-danger";
-
       case "Pending":
         return "bg-warning text-dark";
-
       default:
         return "bg-secondary";
     }
   };
+
+  if (loading) {
+    return (
+      <div className="text-center my-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="alert alert-danger m-4">
+        Error: {error}
+        <button className="btn btn-sm btn-dark ms-3" onClick={fetchUsers}>
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -109,18 +126,12 @@ function Users() {
             {users.map((user) => (
               <tr key={user.id}>
                 <td>{user.name}</td>
-
                 <td>{user.email}</td>
-
                 <td>{user.role}</td>
 
                 <td>
-                  <span
-                    className={`badge ${getStatusClass(user)}`}
-                  >
-                    {user.deleted
-                      ? "Deleted"
-                      : user.status}
+                  <span className={`badge ${getStatusClass(user)}`}>
+                    {user.deleted ? "Deleted" : user.status}
                   </span>
                 </td>
 
@@ -130,9 +141,7 @@ function Users() {
                       {user.status !== "Active" && (
                         <button
                           className="btn btn-success btn-sm me-2"
-                          onClick={() =>
-                            approveUser(user.id)
-                          }
+                          onClick={() => approveUser(user.id)}
                         >
                           Approve
                         </button>
@@ -141,9 +150,7 @@ function Users() {
                       {user.status !== "Restricted" && (
                         <button
                           className="btn btn-warning btn-sm me-2"
-                          onClick={() =>
-                            restrictUser(user.id)
-                          }
+                          onClick={() => restrictUser(user.id)}
                         >
                           Restrict
                         </button>
@@ -151,9 +158,7 @@ function Users() {
 
                       <button
                         className="btn btn-danger btn-sm"
-                        onClick={() =>
-                          deleteUser(user.id)
-                        }
+                        onClick={() => deleteUser(user.id)}
                       >
                         Delete
                       </button>
