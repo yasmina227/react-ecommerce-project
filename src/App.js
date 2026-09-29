@@ -1,7 +1,5 @@
 import "./App.css";
 import StandardErrorBoundry from "./components/errorBoundry/StandardErrorBoundry.jsx";
-import ErrorPage from "./pages/ErrorPage.jsx";
-import TestPage from "./pages/TestPage.jsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import CartPage from "./pages/CartPage.jsx";
 import { store } from "./store.js";
@@ -40,7 +38,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             {/* ================= CART (Person 3) ================= */}
-            <Route path="/" element={<TestPage />} />
+            <Route path="/" element={<CartPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/cart/confirm" element={<Confirm />} />
             <Route path="/cart/completeOrder" element={<CompleteOrder />} />
@@ -68,9 +66,6 @@ function App() {
               <Route path="orders" element={<SellerOrders />} />
               <Route path="earnings" element={<Earnings />} />
             </Route>
-
-            {/* ================= ERROR ================= */}
-            <Route path="*" element={<ErrorPage />} />
           </Routes>
         </BrowserRouter>
       </Provider>
