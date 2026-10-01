@@ -1,8 +1,7 @@
 import React from 'react';
 
 const ProductSearch = ({ searchTerm, setSearchTerm }) => {
-  return
-   (
+  return (
     <div className="mb-3">
       <input
       type="text"

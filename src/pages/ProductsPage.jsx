@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { getAllProducts, getCategories } from '../services/productService';
-import ProductCard from '../components/products/ProductCard';
-import ProductSearch from '../components/products/ProductSearch';
-import ProductFilter from '../components/products/ProductFilter';
+import ProductCard from '../components/productes/ProductCard';
+import ProductSearch from '../components/productes/ProductSearch';
+import ProductFilter from '../components/productes/ProductFilter';
 
    const ProductsPage = () => 
     {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchParams] = useSearchParams();
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '');
   const [maxPrice, setMaxPrice] = useState(2000);
   const [inStockOnly, setInStockOnly] = useState(false);
 
@@ -39,6 +41,10 @@ import ProductFilter from '../components/products/ProductFilter';
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    setSelectedCategory(searchParams.get('category') || '');
+  }, [searchParams]);
 
     const filteredProducts = products.filter((product) => 
         {

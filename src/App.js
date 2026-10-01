@@ -7,6 +7,13 @@ import { Provider } from "react-redux";
 import Confirm from "./pages/Confirm.jsx";
 import CompleteOrder from "./pages/CompleteOrder.jsx";
 import TrackOrder from "./pages/TrackOrder.jsx";
+import ProductsPage from "./pages/ProductsPage.jsx";
+import ProductDetails from "./pages/ProductDetails.jsx";
+import HomePage from "./pages/HomePage.jsx";
+import AuthPage from "./pages/AuthPage.jsx";
+import AccountPage from "./pages/AccountPage.jsx";
+import WishlistPage from "./pages/WishlistPage.jsx";
+import StorefrontLayout from "./components/storefront/StorefrontLayout.jsx";
 
 // ================= ADMIN =================
 import AdminLayout from "./layouts/AdminLayout";
@@ -37,12 +44,20 @@ function App() {
       <Provider store={store}>
         <BrowserRouter>
           <Routes>
-            {/* ================= CART (Person 3) ================= */}
-            <Route path="/" element={<CartPage />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/cart/confirm" element={<Confirm />} />
-            <Route path="/cart/completeOrder" element={<CompleteOrder />} />
-            <Route path="/track-order" element={<TrackOrder />} />
+            <Route element={<StorefrontLayout />}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/products" element={<ProductsPage />} />
+              <Route path="/products/:id" element={<ProductDetails />} />
+              <Route path="/login" element={<AuthPage />} />
+              <Route path="/register" element={<AuthPage />} />
+              <Route path="/profile" element={<AccountPage />} />
+              <Route path="/orders" element={<AccountPage initialTab="orders" />} />
+              <Route path="/wishlist" element={<WishlistPage />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/cart/confirm" element={<Confirm />} />
+              <Route path="/cart/completeOrder" element={<CompleteOrder />} />
+              <Route path="/track-order" element={<TrackOrder />} />
+            </Route>
 
             {/* ================= ADMIN ================= */}
             <Route path="/admin" element={<AdminLayout />}>

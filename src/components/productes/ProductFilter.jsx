@@ -10,8 +10,7 @@ const ProductFilter = ({
   setInStockOnly,
   onResetFilters
 }) => {
-  return
-   (
+  return (
     <div className="card p-3 mb-4 shadow-sm">
       <h5 className="mb-3">Filters</h5>
       <div className="mb-3">
