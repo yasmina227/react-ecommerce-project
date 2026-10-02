@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const CompleteOrder = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    notes: '',
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    notes: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -18,10 +18,9 @@ const CompleteOrder = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    
-    
+
     if (errors[name]) {
-      setErrors({ ...errors, [name]: '' });
+      setErrors({ ...errors, [name]: "" });
     }
   };
 
@@ -29,27 +28,27 @@ const CompleteOrder = () => {
     const newErrors = {};
 
     if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Full Name is required';
+      newErrors.fullName = "Full Name is required";
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = 'Email address is required';
+      newErrors.email = "Email address is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = "Please enter a valid email address";
     }
 
     if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
+      newErrors.phone = "Phone number is required";
     } else if (!/^[0-9]{10,15}$/.test(formData.phone.trim())) {
-      newErrors.phone = 'Please enter a valid phone number (10-15 digits)';
+      newErrors.phone = "Please enter a valid phone number (10-15 digits)";
     }
 
     if (!formData.address.trim()) {
-      newErrors.address = 'Shipping address is required';
+      newErrors.address = "Shipping address is required";
     }
 
     if (!formData.city.trim()) {
-      newErrors.city = 'City / Governorate is required';
+      newErrors.city = "City / Governorate is required";
     }
 
     return newErrors;
@@ -62,16 +61,14 @@ const CompleteOrder = () => {
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
     } else {
-      
-      sessionStorage.setItem('guestCustomer', JSON.stringify(formData));
-      
-      
-      navigate('/cart/confirm');
+      sessionStorage.setItem("guestCustomer", JSON.stringify(formData));
+
+      navigate("/cart/confirm");
     }
   };
 
   return (
-    <div className="container my-5" style={{ maxWidth: '650px' }}>
+    <div className="container my-5" style={{ maxWidth: "650px" }}>
       <div className="card shadow-sm border-0">
         <div className="card-header bg-info text-white py-3">
           <h4 className="mb-0 fs-5 d-flex align-items-center gap-2">
@@ -100,7 +97,7 @@ const CompleteOrder = () => {
                 type="text"
                 id="fullName"
                 name="fullName"
-                className={`form-control ${errors.fullName ? 'is-invalid' : ''}`}
+                className={`form-control ${errors.fullName ? "is-invalid" : ""}`}
                 placeholder="John Doe"
                 value={formData.fullName}
                 onChange={handleChange}
@@ -120,7 +117,7 @@ const CompleteOrder = () => {
                   type="email"
                   id="email"
                   name="email"
-                  className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                  className={`form-control ${errors.email ? "is-invalid" : ""}`}
                   placeholder="name@example.com"
                   value={formData.email}
                   onChange={handleChange}
@@ -138,7 +135,7 @@ const CompleteOrder = () => {
                   type="tel"
                   id="phone"
                   name="phone"
-                  className={`form-control ${errors.phone ? 'is-invalid' : ''}`}
+                  className={`form-control ${errors.phone ? "is-invalid" : ""}`}
                   placeholder="01012345678"
                   value={formData.phone}
                   onChange={handleChange}
@@ -158,7 +155,7 @@ const CompleteOrder = () => {
                 type="text"
                 id="city"
                 name="city"
-                className={`form-control ${errors.city ? 'is-invalid' : ''}`}
+                className={`form-control ${errors.city ? "is-invalid" : ""}`}
                 placeholder="Cairo, Alexandria..."
                 value={formData.city}
                 onChange={handleChange}
@@ -177,7 +174,7 @@ const CompleteOrder = () => {
                 id="address"
                 name="address"
                 rows="2"
-                className={`form-control ${errors.address ? 'is-invalid' : ''}`}
+                className={`form-control ${errors.address ? "is-invalid" : ""}`}
                 placeholder="Building number, street name, apartment..."
                 value={formData.address}
                 onChange={handleChange}

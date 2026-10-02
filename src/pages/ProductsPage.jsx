@@ -1,40 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { getAllProducts, getCategories } from '../services/productService';
-import ProductCard from '../components/productes/ProductCard';
-import ProductSearch from '../components/productes/ProductSearch';
-import ProductFilter from '../components/productes/ProductFilter';
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { getAllProducts, getCategories } from "../services/productService";
+import ProductCard from "../components/productes/ProductCard";
+import ProductSearch from "../components/productes/ProductSearch";
+import ProductFilter from "../components/productes/ProductFilter";
+import { useSelector } from "react-redux";
 
-   const ProductsPage = () => 
-    {
+const ProductsPage = () => {
+  //----------- ADD REMOVE FROM CART --------------
+  const cart = useSelector((state) => state.cart);
+  //---------------------------------------------
+
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(
+    searchParams.get("category") || "",
+  );
   const [maxPrice, setMaxPrice] = useState(2000);
   const [inStockOnly, setInStockOnly] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () =>
-         {
-      try
-       {
+    const fetchData = async () => {
+      try {
         setLoading(true);
         const productsData = await getAllProducts();
         const categoriesData = await getCategories();
-        
+
         setProducts(productsData);
         setCategories(categoriesData);
-      } 
-      catch (error) 
-      {
-        console.error('Error fetching data:', error);
-      } 
-      finally 
-      {
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
         setLoading(false);
       }
     };
@@ -43,45 +43,44 @@ import ProductFilter from '../components/productes/ProductFilter';
   }, []);
 
   useEffect(() => {
-    setSelectedCategory(searchParams.get('category') || '');
+    setSelectedCategory(searchParams.get("category") || "");
   }, [searchParams]);
 
-    const filteredProducts = products.filter((product) => 
-        {
-    const matchesSearch = product.title.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === '' || product.category === selectedCategory;
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "" || product.category === selectedCategory;
     const matchesPrice = product.price <= maxPrice;
     const matchesStock = !inStockOnly || product.stock > 0;
 
     return matchesSearch && matchesCategory && matchesPrice && matchesStock;
   });
 
-  const handleResetFilters = () => 
-    {
-    setSearchTerm('');
-    setSelectedCategory('');
+  const handleResetFilters = () => {
+    setSearchTerm("");
+    setSelectedCategory("");
     setMaxPrice(4000);
     setInStockOnly(false);
   };
 
-  if (loading)
-     {
+  if (loading) {
     return (
       <div className="text-center my-5">
-     <div className="spinner-border text-primary" role="status">
-     <span className="visually-hidden">Loading...</span>
-     </div>
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
       </div>
     );
   }
 
-      return (
+  return (
     <div className="container my-4">
       <h2 className="mb-4">products list</h2>
       <div className="row">
-      
         <div className="col-md-3">
-          <ProductFilter 
+          <ProductFilter
             categories={categories}
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
@@ -89,30 +88,41 @@ import ProductFilter from '../components/productes/ProductFilter';
             setMaxPrice={setMaxPrice}
             inStockOnly={inStockOnly}
             setInStockOnly={setInStockOnly}
-            onResetFilters={handleResetFilters}  />
+            onResetFilters={handleResetFilters}
+          />
         </div>
 
         <div className="col-md-9">
-          <ProductSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <ProductSearch
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
 
           <div className="row row-cols-1 row-cols-md-3 g-4">
             {filteredProducts.length > 0 ? (
-            filteredProducts.map((product) => (
-         <div className="col" key={product.id}>
-          <ProductCard product={product} />
-          </div>
-              ))
+              filteredProducts.map((product) => {
+                //------------------------- ADD & REMOVE CART -------------
+                const isInCart = cart.cartItems?.some(
+                  (item) => item.id === product.id,
+                );
+                //--------------------------------------------------
+                return (
+                  <div className="col" key={product.id}>
+                    <ProductCard product={product} isInCart={isInCart} />
+                  </div>
+                );
+              })
             ) : (
-             <div className="col-12">
-         <div className="alert alert-warning text-center">
-              No products found matching your criteria.
-            </div>
-            </div>
-         )}
-     </div>
+              <div className="col-12">
+                <div className="alert alert-warning text-center">
+                  No products found matching your criteria.
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
- </div>
- </div>
   );
 };
 

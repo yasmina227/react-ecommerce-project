@@ -51,7 +51,10 @@ function App() {
               <Route path="/login" element={<AuthPage />} />
               <Route path="/register" element={<AuthPage />} />
               <Route path="/profile" element={<AccountPage />} />
-              <Route path="/orders" element={<AccountPage initialTab="orders" />} />
+              <Route
+                path="/orders"
+                element={<AccountPage initialTab="orders" />}
+              />
               <Route path="/wishlist" element={<WishlistPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/cart/confirm" element={<Confirm />} />

@@ -1,26 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { applyCoupon } from "../features/cart/CartSlice";
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate } from "react-router-dom";
 
 const OrderSummary = () => {
-  const cart = useSelector((state)=>state.cart);
+  const cart = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
-  const { totalQuantity = 0, totalAmount = 0, shippingFee = 0, coupon } = useSelector(
-    (state) => state.cart || {}
-  );
 
-  
+  const {
+    totalQuantity = 0,
+    totalAmount = 0,
+    shippingFee = 0,
+    coupon,
+  } = useSelector((state) => state.cart || {});
+
   const [promoInput, setPromoInput] = useState("");
-  const [statusMessage, setStatusMessage] = useState({ text: "", isError: false });
-  const [discount,setDiscount]= useState(0);
+  const [statusMessage, setStatusMessage] = useState({
+    text: "",
+    isError: false,
+  });
+  const [discount, setDiscount] = useState(0);
 
   const VALID_CODES = {
-    "SAVE10": 10, 
-    "DISCOUNT20": 20 
+    SAVE10: 10,
+    DISCOUNT20: 20,
   };
 
   const handleApplyPromo = (e) => {
@@ -35,13 +39,16 @@ const OrderSummary = () => {
 
     if (VALID_CODES[formattedCode]) {
       const discount = VALID_CODES[formattedCode];
-      if(discount==="SAVE10"){
-        setDiscount(.1);
-      }else{
-        setDiscount(.2)
+      if (discount === "SAVE10") {
+        setDiscount(0.1);
+      } else {
+        setDiscount(0.2);
       }
       dispatch(applyCoupon({ code: formattedCode, discount }));
-      setStatusMessage({ text: "Discount applied successfully!", isError: false });
+      setStatusMessage({
+        text: "Discount applied successfully!",
+        isError: false,
+      });
     } else {
       setStatusMessage({ text: "Not correct code", isError: true });
     }
@@ -50,21 +57,23 @@ const OrderSummary = () => {
   const currentShipping = totalQuantity > 0 ? shippingFee : 0;
   const grandTotal = totalAmount + currentShipping;
 
-  const handleCompleteOrder=()=>{
-    if(cart.login){
-      navigate('/cart/confirm');
-    }else{
-     let answer = window.confirm("are you want to continue as guest?");
-     if(answer){
-      navigate("/cart/completeOrder");
-      
-     }else{
-      navigate("/");
-     }
+  const handleCompleteOrder = () => {
+    if (cart.login) {
+      navigate("/cart/confirm");
+    } else {
+      let answer = window.confirm("are you want to continue as guest?");
+      if (answer) {
+        navigate("/cart/completeOrder");
+      } else {
+        navigate("/");
+      }
     }
-}
+  };
   return (
-    <div className="shadow-sm p-3 m-3 rounded border text-end" style={{height:"70vh"}}>
+    <div
+      className="shadow-sm p-3 m-3 rounded border text-end"
+      style={{ height: "70vh" }}
+    >
       <div>
         <h3 className="text-start">Order Summary</h3>
 
@@ -85,7 +94,10 @@ const OrderSummary = () => {
 
         <form onSubmit={handleApplyPromo} className="pt-3">
           <div className="input-group">
-            <label className="input-group-text bg-info text-light" htmlFor="promo">
+            <label
+              className="input-group-text bg-info text-light"
+              htmlFor="promo"
+            >
               PROMO CODE
             </label>
             <input
@@ -98,7 +110,6 @@ const OrderSummary = () => {
             />
           </div>
 
-          
           {statusMessage.text && (
             <span
               className={`d-block text-start mt-1 ${
@@ -124,15 +135,18 @@ const OrderSummary = () => {
                 <del>${(totalAmount + currentShipping).toFixed(2)}</del>
               </span>
             )}
-            <span>${(grandTotal-(grandTotal*discount)).toFixed(2)}</span>
+            <span>${(grandTotal - grandTotal * discount).toFixed(2)}</span>
           </div>
         </div>
       </div>
 
-      <button className="btn bg-success text-light m-2 w-100" onClick={()=>handleCompleteOrder()} disabled={totalQuantity === 0}>
+      <button
+        className="btn bg-success text-light m-2 w-100"
+        onClick={() => handleCompleteOrder()}
+        disabled={totalQuantity === 0}
+      >
         Buy
       </button>
-      
     </div>
   );
 };

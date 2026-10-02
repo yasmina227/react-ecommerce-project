@@ -19,7 +19,7 @@ const StorefrontNavbar = () => {
 
   return (
     <>
-      <div className="store-promo-bar">A little treat for your first order <span>Use HELLO10 for 10% off</span></div>
+      <div className="store-promo-bar">A little treat for your first order <span>Use SAVE10 for 10% off</span></div>
       <nav className="navbar navbar-expand-lg store-navbar">
         <div className="container">
           <Link className="navbar-brand store-brand" to="/" aria-label="Nook home">
