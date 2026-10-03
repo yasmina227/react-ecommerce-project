@@ -158,14 +158,14 @@ const TrackOrder = () => {
                   <p className="mb-1 small">
                     <strong>Name:</strong>{" "}
                     {orderDetails.customer?.fullName ||
-                      orderDetails.customer?.name}
+                      "user"}
                   </p>
                   <p className="mb-1 small">
-                    <strong>Email:</strong> {orderDetails.customer?.email}
+                    <strong>Email:</strong> {orderDetails.customer?.email||"user@gmail.com"}
                   </p>
                   <p className="mb-0 small">
-                    <strong>Address:</strong> {orderDetails.customer?.address}{" "}
-                    {orderDetails.customer?.city}
+                    <strong>Address:</strong> {orderDetails.customer?.address || "US"}{" "}
+                    {orderDetails.customer?.city||"NewYork"}
                   </p>
                 </div>
 

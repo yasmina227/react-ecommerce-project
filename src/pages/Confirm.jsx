@@ -100,17 +100,17 @@ const Confirm = () => {
             <div className="card-body">
               <p className="mb-1">
                 <strong>Name:</strong>{" "}
-                {customerInfo.fullName || customerInfo.name}
+                {customerInfo.name || "user"}
               </p>
               <p className="mb-1">
-                <strong>Email:</strong> {customerInfo.email}
+                <strong>Email:</strong> {customerInfo.email ||"user@gmail.com"}
               </p>
               <p className="mb-1">
-                <strong>Phone:</strong> {customerInfo.phone}
+                <strong>Phone:</strong> {customerInfo.phone||"012345678902"}
               </p>
               <p className="mb-0">
-                <strong>Address:</strong> {customerInfo.address},{" "}
-                {customerInfo.city}
+                <strong>Address:</strong> {customerInfo.address||"US"},{" "}
+                {customerInfo.city||"NewYork"}
               </p>
             </div>
           </div>
