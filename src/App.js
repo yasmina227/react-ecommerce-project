@@ -1,4 +1,4 @@
-import "./App.css";
+/*import "./App.css";
 import StandardErrorBoundry from "./components/errorBoundry/StandardErrorBoundry.jsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import CartPage from "./pages/CartPage.jsx";
@@ -62,32 +62,29 @@ function App() {
               <Route path="/track-order" element={<TrackOrder />} />
             </Route>
 
-            {/* ================= ADMIN ================= */}
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="users" element={<Users />} />
-              <Route path="products" element={<Products />} />
-              <Route path="categories" element={<Categories />} />
-              <Route path="orders" element={<Orders />} />
-              <Route path="shipping" element={<Shipping />} />
-              <Route path="promo-codes" element={<PromoCodes />} />
-              <Route path="banners" element={<Banners />} />
-            </Route>
+            {/* ================= ADMIN ================= */
+    
 
-            {/* ================= SELLER ================= */}
-            <Route path="/seller" element={<SellerLayout />}>
-              <Route index element={<SellerDashboard />} />
-              <Route path="register" element={<SellerRegistration />} />
-              <Route path="profile" element={<SellerProfile />} />
-              <Route path="products" element={<SellerProducts />} />
-              <Route path="inventory" element={<Inventory />} />
-              <Route path="orders" element={<SellerOrders />} />
-              <Route path="earnings" element={<Earnings />} />
-            </Route>
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ProductProvider } from './context/ProductContext';
+import ProductsPage from './pages/ProductsPage';
+import ProductDetails from './pages/ProductDetails';
+
+function App() {
+  return (
+  
+    <ProductProvider>
+      <Router>
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<Navigate to="/products" replace />} />
+            <Route path="/products" element={<ProductsPage />} />
+            <Route path="/products/:id" element={<ProductDetails />} />
           </Routes>
-        </BrowserRouter>
-      </Provider>
-    </StandardErrorBoundry>
+        </div>
+      </Router>
+    </ProductProvider>
   );
 }
 
