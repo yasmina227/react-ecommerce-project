@@ -56,9 +56,9 @@ const OrderSummary = () => {
 
   const currentShipping = totalQuantity > 0 ? shippingFee : 0;
   const grandTotal = totalAmount + currentShipping;
-
+    const isLogin =JSON.parse(localStorage.getItem('user'));
   const handleCompleteOrder = () => {
-    if (cart.login) {
+    if (isLogin) {
       navigate("/cart/confirm");
     } else {
       let answer = window.confirm("are you want to continue as guest?");

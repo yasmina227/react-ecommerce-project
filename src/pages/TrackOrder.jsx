@@ -14,9 +14,9 @@ const TrackOrder = () => {
   const calculateCurrentStatus = (createdAt) => {
     const minutesPassed = (Date.now() - createdAt) / (1000 * 60);
 
-    if (minutesPassed < 2) return "Placed";
-    if (minutesPassed < 5) return "Processing";
-    if (minutesPassed < 10) return "Shipped";
+    if (minutesPassed < .5) return "Placed";
+    if (minutesPassed < 1) return "Processing";
+    if (minutesPassed < 1.5) return "Shipped";
     return "Delivered";
   };
 

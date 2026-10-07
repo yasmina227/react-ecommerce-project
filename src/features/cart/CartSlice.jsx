@@ -12,7 +12,6 @@ const initialState = {
   },
   isLoading: false,
   error: null,
-  login:true,
   auth:false
 };
 
